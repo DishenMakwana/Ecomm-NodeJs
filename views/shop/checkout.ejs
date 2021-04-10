@@ -19,17 +19,7 @@
             </div>
             <div class="centered">
                 <form action="/create-order" method="POST">
-                    <script
-                      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                      data-key="pk_test_51IakDxSJsiHGdYVzpcrxiPbaW5N4AteMdatOGvSpooci1jR4ZhUfl0iQnplkoKWBh7TgfRCGO31qf9q5L6kpmBbq00YHWw7vI9"
-                      data-amount="<%= totalSum * 100 %>"
-                      data-name="Your Order"
-                      data-address="40 Riverview Dr.Front Royal, VA 22630"
-                      data-description="All the items you ordewred"
-                      data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-                      data-locale="auto"
-                      data-currency="usd">
-                    </script>
+                    <button class="btn btn-primary">Confirm Order</button>
                   </form>
             </div>
         </main>

@@ -2,12 +2,23 @@ const fs = require('fs');
 const path = require('path');
 
 const PDFDocument = require('pdfkit');
-const stripe = require('stripe')(process.env.STRIPE_KEY);
+// const stripe = require('stripe')(process.env.STRIPE_KEY);
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
 
 const ITEMS_PER_PAGE = 2;
+
+const transporter = nodemailer.createTransport(
+    sendgridTransport({
+        auth: {
+            api_key:
+                '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',
+        },
+    })
+);
 
 exports.getProducts = (req, res, next) => {
     const page = +req.query.page || 1;
@@ -194,17 +205,18 @@ exports.postOrder = (req, res, next) => {
             return order.save();
         })
         .then((result) => {
-            const charge = stripe.charges.create({
-                amount: totalSum * 100,
-                currency: 'usd',
-                description: 'Demo Order',
-                source: token,
-                metadata: { order_id: result._id.toString() },
+            transporter.sendMail({
+                to: req.user.email,
+                // from: 'DISHEN <no-reply.dm@outlook.com>',
+                from: 'DISHEN <dixpatel9175@gmail.com>',
+                subject: 'Placed Order!',
+                html: `
+                <p>Your order has been successfully palced.</p>
+                `,
             });
             return req.user.clearCart();
         })
         .then(() => {
-            console.log('Payment Successfully done!');
             res.redirect('/orders');
         })
         .catch((err) => {

@@ -19,7 +19,8 @@ const shopController = require('./controllers/shop');
 const isAuth = require('./middleware/is-auth');
 const User = require('./models/user');
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.rlpkk.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+const MONGODB_URI = `mongodb+srv://dishen:dishen@cluster0.rlpkk.mongodb.net/shop`;
+// const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.rlpkk.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
 const store = new MongoDBStore({
@@ -27,6 +28,9 @@ const store = new MongoDBStore({
     collection: 'sessions',
 });
 const csrfProtection = csrf();
+
+// const privateKey = fs.readFileSync('server.key');
+// const certificate = fs.readFileSync('server.cert');
 
 const fileStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -84,6 +88,7 @@ app.use(
         store: store,
     })
 );
+
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -112,7 +117,6 @@ app.use((req, res, next) => {
 app.post('/create-order', isAuth, shopController.postOrder);
 
 app.use(csrfProtection);
-
 app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     next();
@@ -141,8 +145,8 @@ mongoose
     .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => {
         // https
-        //     .createServer({ key: privateKey, cert: certificate }, app)
-        //     .listen(process.env.PORT || 3000);
+        //   .createServer({ key: privateKey, cert: certificate }, app)
+        //   .listen(process.env.PORT || 3000);
         app.listen(process.env.PORT || 3000);
     })
     .catch((err) => {

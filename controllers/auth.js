@@ -7,27 +7,27 @@ const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
 
-const transporter = nodemailer.createTransport({
-    service: 'hotmail',
-    port: 587,
-    secure: false,
-    auth: {
-        user: 'no-reply.dm@outlook.com',
-        pass: 'noreply@dm',
-    },
-    tls: {
-        rejectUnauthorized: false,
-    },
-});
+// const transporter = nodemailer.createTransport({
+//     service: 'hotmail',
+//     port: 587,
+//     secure: false,
+//     auth: {
+//         user: 'no-reply.dm@outlook.com',
+//         pass: 'noreply@dm',
+//     },
+//     tls: {
+//         rejectUnauthorized: false,
+//     },
+// });
 
-// const transporter = nodemailer.createTransport(
-//     sendgridTransport({
-//         auth: {
-//             api_key:
-//                 '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',
-//         },
-//     })
-// );
+const transporter = nodemailer.createTransport(
+    sendgridTransport({
+        auth: {
+            api_key:
+                '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',
+        },
+    })
+);
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
@@ -111,8 +111,8 @@ exports.postLogin = (req, res, next) => {
                             res.redirect('/');
                             return transporter.sendMail({
                                 to: email,
-                                from: 'DISHEN <no-reply.dm@outlook.com>',
-                                // from: 'DISHEN <dixpatel9175@gmail.com>',
+                                // from: 'DISHEN <no-reply.dm@outlook.com>',
+                                from: 'DISHEN <dixpatel9175@gmail.com>',
                                 subject: 'Login succeeded!',
                                 html: '<h1>You successfully logged in!</h1>',
                             });
@@ -218,9 +218,8 @@ exports.postReset = (req, res, next) => {
         const token = buffer.toString('hex');
         User.findOne({ email: req.body.email })
             .then((user) => {
-                console.log(user);
                 if (!user) {
-                    req.flash('error', 'No account with this email found.');
+                    req.flash('error', 'No account with that email found.');
                     return res.redirect('/reset');
                 }
                 user.resetToken = token;
@@ -231,13 +230,13 @@ exports.postReset = (req, res, next) => {
                 res.redirect('/');
                 transporter.sendMail({
                     to: req.body.email,
-                    from: 'DISHEN <no-reply.dm@outlook.com>',
-                    // from: 'DISHEN <dixpatel9175@gmail.com>',
+                    // from: 'DISHEN <no-reply.dm@outlook.com>',
+                    from: 'DISHEN <dixpatel9175@gmail.com>',
                     subject: 'Password reset',
                     html: `
-                        <p>You requested for a password reset</p>
-                        <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-                        `,
+                      <p>You requested for a password reset</p>
+                      <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+                      `,
                 });
             })
             .catch((err) => {
@@ -303,21 +302,20 @@ exports.postNewPassword = (req, res, next) => {
             res.redirect('/login');
             transporter.sendMail({
                 to: email,
-                from: 'DISHEN <no-reply.dm@outlook.com>',
-                // from: 'DISHEN <dixpatel9175@gmail.com>',
+                // from: 'DISHEN <no-reply.dm@outlook.com>',
+                from: 'DISHEN <dixpatel9175@gmail.com>',
                 subject: 'Password reset Done',
                 html: `
-                    <p>Your password has been change</p>
+                  <p>Your password has been change</p>
 
-                    <h4>Your Email: ${email}</h4>
-                    <h4>Your new Password: ${newPassword}</h4>
+                  <h4>Your Email: ${email}</h4>
+                  <h4>Your new Password: ${newPassword}</h4>
 
-                    <p>Do not share this password with anyone.</p>
+                  <p>Do not share this password with anyone.</p>
 
-                    -
-                    <h4><b>DISHEN</b></h4>
-                    <h4><b>shop@node-ecomm.com</b></h4>
-                    `,
+                  -
+                  <h4><b>DISHEN</b></h4>
+                  `,
             });
         })
         .catch((err) => {
@@ -326,42 +324,3 @@ exports.postNewPassword = (req, res, next) => {
             return next(error);
         });
 };
-
-// const { google } = require('googleapis');
-
-// const CLIENT_ID =
-//     '29757254005-451ojbbpmpn7v843os9rbv289s1ojq4g.apps.googleusercontent.com';
-// const CLEINT_SECRET = 'LBlQ8FbXkbn0UMjS7yLF4VAt';
-// const REDIRECT_URI = 'https://developers.google.com/oauthplayground/';
-// const REFRESH_TOKEN =
-//     '1//04z5Y73uJdB8jCgYIARAAGAQSNwF-L9IrA3VGzu_qhM1kOAxtGujzYMYBB70kr5MUvxvrfWF1Nrko87OLkWJPoAjN4V_hAdMZ8BI';
-// const API_KEY = 'AIzaSyA_ZyCuY_eJzg49qdONAuDOGsfk0b2yFfg';
-
-// const oAuth2Client = new google.auth.OAuth2(
-//     CLIENT_ID,
-//     CLEINT_SECRET,
-//     REDIRECT_URI
-// );
-// oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-// let transport = nodemailer.createTransport({
-//     service: 'gmail',
-//     port: 587,
-//     auth: {
-//         type: 'OAuth2',
-//         user: 'noreply.nodedm@gmail.com',
-//         pass: 'noreply@dm',
-//         clientId: CLIENT_ID,
-//         clientSecret: CLEINT_SECRET,
-//         refreshToken: REFRESH_TOKEN,
-//         apiKey: API_KEY,
-//     },
-// });
-
-// const mailOptions = {
-//     from: 'DISHEN <noreply.nodedm@gmail.com>',
-//     to: email,
-//     subject: 'Hello from gmail using API',
-//     text: 'Hello from gmail email using API',
-//     html: '<h1>Hello from gmail email using API</h1>',
-// };
